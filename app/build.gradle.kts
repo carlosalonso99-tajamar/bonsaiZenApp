@@ -75,6 +75,10 @@ dependencies {
     implementation(libs.androidx.biometric)
     // Firebase
     implementation(libs.bundles.firebase)
+    implementation(libs.firebase.firestore)
+    implementation(platform(libs.firebase.bom.v3280))
+    implementation(libs.firebase.storage)
+    implementation(libs.firebase.auth)
     //Test
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
