@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">My Application</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    //Init Fragment
+    <string name="tv_init_text">Bonsai Zen</string>
+    <string name="btn_init_text">Comienza a usar Bonsai Zen!</string>
+    <string name="btn_init_text2">Ya eres miembro,entra</string>
+
+    //Register Fragment
+    <string name="tv_register_title">Registrate para comenzar a explorar</string>
+
 </resources>
