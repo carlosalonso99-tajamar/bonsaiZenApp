@@ -28,7 +28,7 @@ class InitViewModel @Inject constructor(
     fun onStartButtonClicked() {
         if (auth.currentUser != null) {
             viewModelScope.launch {
-                _navigationEvent.emit(NavigationEvent.NavigateToMainScreen)
+                _navigationEvent.emit(NavigationEvent.NavigateToRegisterScreen)
             }
         } else {
             viewModelScope.launch {
@@ -40,7 +40,7 @@ class InitViewModel @Inject constructor(
     fun onSignInButtonClicked() {
         if (auth.currentUser != null) {
             viewModelScope.launch {
-                _navigationEvent.emit(NavigationEvent.NavigateToMainScreen)
+                _navigationEvent.emit(NavigationEvent.NavigateToRegisterScreen)
             }
         } else {
             viewModelScope.launch {
@@ -51,6 +51,6 @@ class InitViewModel @Inject constructor(
 }
 
 sealed class NavigationEvent {
-    object NavigateToMainScreen : NavigationEvent()
+    object NavigateToRegisterScreen : NavigationEvent()
     object NavigateToAuthScreen : NavigationEvent()
 }

@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import com.bonsaizen.bonsaizenapp.R
 import com.bonsaizen.bonsaizenapp.databinding.FragmentInitBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -29,6 +31,7 @@ class InitFragment : Fragment() {
 
     private fun setOnClickListeners() {
         binding.btnInit.setOnClickListener {
+            findNavController().navigate(R.id.action_initFragment_to_registerFragment)
             viewModel.onStartButtonClicked()
         }
 
@@ -42,20 +45,18 @@ class InitFragment : Fragment() {
         lifecycleScope.launch {
             viewModel.navigationEvent.collect { event ->
                 when (event) {
-                    is NavigationEvent.NavigateToMainScreen -> navigateToMainScreen()
+                    is NavigationEvent.NavigateToRegisterScreen -> navigateToRegisterScreen()
                     is NavigationEvent.NavigateToAuthScreen -> navigateToAuthScreen()
                 }
             }
         }
     }
 
-    private fun navigateToMainScreen() {
-        // Implementa la lógica para navegar a la pantalla principal
-
+    private fun navigateToRegisterScreen() {
+        findNavController().navigate(R.id.action_initFragment_to_registerFragment)
     }
-
     private fun navigateToAuthScreen() {
-        // Implementa la lógica para navegar a la pantalla de autenticación
 
     }
+
 }

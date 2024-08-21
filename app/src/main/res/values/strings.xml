@@ -10,5 +10,10 @@
 
     //Register Fragment
     <string name="tv_register_title">Registrate para comenzar a explorar</string>
+    <string name="et_mail_hint">Correo electrónico</string>
+    <string name="et_pass_hint">Contraseña</string>
+    <string name="et_repeatpass_hint">Repetir Contraseña</string>
+    <string name="btn_register">Registrarse</string>
+    <string name="btn_google">Registrate con Google</string>
 
 </resources>
