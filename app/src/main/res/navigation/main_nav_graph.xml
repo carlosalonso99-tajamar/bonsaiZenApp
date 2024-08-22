@@ -18,6 +18,9 @@
             app:exitAnim="@anim/exit_to_left"
             app:popEnterAnim="@anim/enter_from_left"
             app:popExitAnim="@anim/exit_to_right"/>
+        <action
+            android:id="@+id/action_initFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
     </fragment>
     <fragment
         android:id="@+id/registerFragment"
@@ -27,5 +30,33 @@
         <action
             android:id="@+id/action_registerFragment_to_initFragment"
             app:destination="@id/initFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.bonsaizen.bonsaizenapp.ui.login.LoginFragment"
+        android:label="LoginFragment" >
+        <action
+            android:id="@+id/action_loginFragment_to_bonsaiListFragment"
+            app:destination="@id/bonsaiListFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_initFragment"
+            app:destination="@id/initFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/bonsaiListFragment"
+        android:name="com.bonsaizen.bonsaizenapp.ui.bonsais.BonsaiListFragment"
+        android:label="BonsaiListFragment" >
+        <action
+            android:id="@+id/action_bonsaiListFragment_to_addBonsaiFragment"
+            app:destination="@id/addBonsaiFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addBonsaiFragment"
+        android:name="com.bonsaizen.bonsaizenapp.ui.addbonsai.AddBonsaiFragment"
+        android:label="fragment_add_bonsai"
+        tools:layout="@layout/fragment_add_bonsai" >
+        <action
+            android:id="@+id/action_addBonsaiFragment_to_bonsaiListFragment"
+            app:destination="@id/bonsaiListFragment" />
     </fragment>
 </navigation>
