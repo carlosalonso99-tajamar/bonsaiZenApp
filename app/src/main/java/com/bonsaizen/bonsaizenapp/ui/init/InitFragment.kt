@@ -31,7 +31,6 @@ class InitFragment : Fragment() {
 
     private fun setOnClickListeners() {
         binding.btnInit.setOnClickListener {
-            findNavController().navigate(R.id.action_initFragment_to_registerFragment)
             viewModel.onStartButtonClicked()
         }
 
