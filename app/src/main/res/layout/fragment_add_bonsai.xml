@@ -4,19 +4,34 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".ui.addbonsai.AddBonsaiFragment">
+
+    <ImageButton
+        android:id="@+id/iv_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/ic_back"
+        android:backgroundTint="@color/black"
+        android:padding="18dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/iv_photo_bonsai"
         android:layout_width="match_parent"
         android:layout_height="250dp"
+        android:layout_marginTop="15dp"
         android:background="@color/gray"
         android:src="@drawable/ic_image"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/iv_back" />
 
-    <ImageView
+    <ImageButton
         android:id="@+id/iv_camera"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -24,6 +39,7 @@
         android:layout_marginTop="4dp"
         android:padding="12dp"
         android:src="@drawable/ic_camera"
+        android:background="@color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/iv_photo_bonsai" />
 
@@ -54,10 +70,11 @@
     <EditText
         android:id="@+id/et_name_bonsai"
         android:layout_width="253dp"
-        android:layout_height="35dp"
-        android:layout_marginTop="60dp"
+        android:layout_height="45dp"
+        android:layout_marginTop="44dp"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.153"
+        app:layout_constraintHorizontal_bias="0.176"
         app:layout_constraintStart_toEndOf="@+id/tv_name_label"
         app:layout_constraintTop_toBottomOf="@+id/tv_add_photo" />
 
@@ -65,8 +82,8 @@
         android:id="@+id/tv_date_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="48dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginStart="52dp"
+        android:layout_marginTop="36dp"
         android:fontFamily="@font/inder"
         android:text="@string/et_date"
         android:textSize="16sp"
@@ -76,8 +93,10 @@
     <EditText
         android:id="@+id/et_date_bonsai"
         android:layout_width="203dp"
-        android:layout_height="35dp"
+        android:layout_height="45dp"
         android:layout_marginTop="10dp"
+        android:inputType="date"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/tv_date_label"
         app:layout_constraintTop_toBottomOf="@+id/et_name_bonsai" />
@@ -86,8 +105,8 @@
         android:id="@+id/tv_transplant_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="48dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginStart="52dp"
+        android:layout_marginTop="36dp"
         android:fontFamily="@font/inder"
         android:text="@string/et_transplant"
         android:textSize="16sp"
@@ -97,9 +116,11 @@
     <EditText
         android:id="@+id/et_transplant_bonsai"
         android:layout_width="190dp"
-        android:layout_height="35dp"
+        android:layout_height="45dp"
         android:layout_marginStart="15dp"
         android:layout_marginTop="10dp"
+        android:inputType="date"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/tv_transplant_label"
@@ -109,8 +130,8 @@
         android:id="@+id/tv_next_transplant_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="48dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginStart="52dp"
+        android:layout_marginTop="32dp"
         android:fontFamily="@font/inder"
         android:text="@string/et_next_transplant"
         android:textSize="16sp"
@@ -120,10 +141,13 @@
     <EditText
         android:id="@+id/et_next_transplant_bonsai"
         android:layout_width="180dp"
-        android:layout_height="35dp"
+        android:layout_height="45dp"
         android:layout_marginStart="4dp"
         android:layout_marginTop="10dp"
+        android:inputType="date"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.434"
         app:layout_constraintStart_toEndOf="@+id/tv_next_transplant_label"
         app:layout_constraintTop_toBottomOf="@+id/et_transplant_bonsai" />
 
@@ -141,6 +165,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

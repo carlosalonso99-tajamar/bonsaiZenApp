@@ -7,6 +7,10 @@
     <string name="error">Error</string>
     <string name="user_register_error">Todos los campos son obligatorios</string>
     <string name="error_password_mismatch">Las contraseñas no coinciden</string>
+    <string name="confirm_exit_title">¿Estás seguro?</string>
+    <string name="confirm_exit_message">¿Realmente quieres salir?</string>
+    <string name="confirm">Confirmar</string>
+    <string name="cancel">Cancelar</string>
 
     //Init Fragment
     <string name="tv_init_text">Bonsai Zen</string>

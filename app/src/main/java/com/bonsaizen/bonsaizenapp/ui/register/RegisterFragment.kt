@@ -130,6 +130,11 @@ class RegisterFragment : Fragment() {
     }
 
     private fun setOnClickListeners() {
+
+        binding.ivBack.setOnClickListener {
+            findNavController().navigate(R.id.action_registerFragment_to_initFragment)
+        }
+
         binding.btnRegister.setOnClickListener {
             val email = binding.etMail.text.toString()
             val password = binding.etPassword.text.toString()
