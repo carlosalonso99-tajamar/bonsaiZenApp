@@ -1,5 +1,4 @@
 plugins {
-
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.navigationSafeArgs)
@@ -8,17 +7,6 @@ plugins {
     alias(libs.plugins.pluginDevKsp)
     alias(libs.plugins.googleServices)
     alias(libs.plugins.firebaseCrashlytics)
-
-    kotlin("kapt")
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.jetbrains.kotlin.android)
-    alias(libs.plugins.pluginNavigationSafeArgs)
-    alias(libs.plugins.pluginDaggerHilt)
-    alias(libs.plugins.kotlin.parcelize)
-    alias(libs.plugins.pluginCrashlytics)
-    alias(libs.plugins.pluginGoogleServices)
-    alias(libs.plugins.pluginKsp)
-
 }
 
 android {
@@ -53,17 +41,15 @@ android {
     }
     buildFeatures {
         viewBinding = true
-
-
-        buildConfig = true
-
     }
 }
 
 dependencies {
 
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.material)
     implementation(libs.androidx.activity)
-
     implementation(libs.androidx.fragment)
     implementation(libs.androidx.constraintlayout)
     implementation (libs.androidx.recyclerview)
@@ -107,50 +93,6 @@ dependencies {
     //Room
     implementation (libs.androidx.room.ktx)
     ksp (libs.androidx.room.compiler)
-}
-
-    implementation(libs.androidx.security.crypto.ktx)
-    //Android
-    implementation(libs.bundles.android)
-    //Navigation
-    implementation(libs.bundles.navigation)
-    //Lifecycle
-    implementation(libs.bundles.lifecycle)
-    //Retrofit
-    implementation(libs.bundles.retrofit)
-    //Okhttp
-    implementation(libs.okhttp)
-    //Interceptor
-    implementation(libs.interceptor)
-    implementation(libs.gson)
-    //Hilt
-    implementation(libs.daggerHilt)
-    //Rooms
-    implementation(libs.bundles.room)
-    //coroutines
-    implementation(libs.bundles.coroutines)
-    //Circle image view
-    implementation(libs.circleimageview)
-    // Kotlin
-    implementation(libs.androidx.biometric)
-    // Firebase
-    implementation(libs.bundles.firebase)
-    implementation(libs.firebase.firestore)
-    implementation(platform(libs.firebase.bom.v3280))
-    implementation(libs.firebase.storage)
-    implementation(libs.firebase.auth)
-    //Test
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    //Kapt
-    kapt(libs.daggerHiltCompiler)
-    //Ksp
-    ksp(libs.androidx.room.compiler)
-}
-
-kapt {
-    correctErrorTypes = true
 }
 
 
