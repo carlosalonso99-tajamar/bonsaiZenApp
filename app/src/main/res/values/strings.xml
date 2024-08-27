@@ -1,10 +1,11 @@
 <resources>
-    <string name="app_name">My Application</string>
+    <string name="app_name">BonsaiZen</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="user_register">Registro exitoso</string>
     <string name="user_success">Usuario creado</string>
     <string name="error">Error</string>
+    <string name="credentials">El usuario o la contraseña son incorrectos</string>
     <string name="user_register_error">Todos los campos son obligatorios</string>
     <string name="error_password_mismatch">Las contraseñas no coinciden</string>
     <string name="confirm_exit_title">¿Estás seguro?</string>

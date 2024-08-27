@@ -95,6 +95,11 @@ class LoginFragment : Fragment() {
             viewModel.loginEvent.collect { event ->
                 when (event) {
                     is LoginViewModel.LoginEvent.ShowErrorMessage -> {
+                        showProgressBar(false)
+                        showAlertDialog(
+                            getString(R.string.error),
+                            getString(R.string.credentials)
+                        )
                         Log.d("LoginFragment", "Error message: ${event.message}")
                     }
                 }
