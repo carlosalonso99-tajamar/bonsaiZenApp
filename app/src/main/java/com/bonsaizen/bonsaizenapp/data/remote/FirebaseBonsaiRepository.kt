@@ -1,6 +1,7 @@
 package com.bonsaizen.bonsaizenapp.data.remote
 
 import android.net.Uri
+import android.util.Log
 import com.bonsaizen.bonsaizenapp.data.model.bonsais.Bonsai
 import com.bonsaizen.bonsaizenapp.data.repository.BonsaiRepository
 import com.google.firebase.auth.FirebaseAuth
@@ -32,14 +33,28 @@ class FirebaseBonsaiRepository @Inject constructor(
 
     override suspend fun getBonsaiList(userId: String): Result<List<Bonsai>> {
         return try {
-            val querySnapshot = firestore.collection("Users")
+            val userId = auth.currentUser?.email ?: throw Exception("Usuario no autenticado")
+            Log.d(
+                "BonsaiRepository",
+                "Fetching bonsais for user: $userId"
+            ) // Log para el inicio de la operación
+
+            // Referencia a la colección de bonsáis del usuario
+            val bonsaiCollectionRef = firestore.collection("Users")
                 .document(userId)
                 .collection("bonsais")
-                .get()
-                .await()
-            val bonsaiList = querySnapshot.documents.mapNotNull { it.toObject(Bonsai::class.java) }
+
+            // Obtener los documentos de la subcolección de bonsáis
+            val snapshot = bonsaiCollectionRef.get().await()
+
+            // Convertir los documentos en objetos Bonsai
+            val bonsaiList = snapshot.toObjects(Bonsai::class.java)
+
+            Log.d("BonsaiRepository", "Fetched bonsais count: ${bonsaiList.size}") // Log para éxito
+
             Result.success(bonsaiList)
         } catch (e: Exception) {
+            Log.e("BonsaiRepository", "Error fetching bonsais", e) // Log para errores
             Result.failure(e)
         }
     }

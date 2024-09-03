@@ -46,4 +46,8 @@ class FireBaseAuthRepository @Inject constructor(
         }
     }
 
+    override suspend fun getCurrentUserId(): String {
+        return FirebaseAuth.getInstance().currentUser?.uid ?: ""
+    }
+
 }

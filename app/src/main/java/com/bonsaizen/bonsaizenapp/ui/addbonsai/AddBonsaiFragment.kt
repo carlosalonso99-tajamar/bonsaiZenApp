@@ -1,14 +1,12 @@
 package com.bonsaizen.bonsaizenapp.ui.addbonsai
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
-import android.content.Intent
-import android.graphics.Bitmap
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
+import android.os.Environment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +14,9 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -25,26 +26,67 @@ import com.bonsaizen.bonsaizenapp.databinding.FragmentAddBonsaiBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import java.util.UUID
 
 @AndroidEntryPoint
 class AddBonsaiFragment : Fragment() {
 
-    private lateinit var binding : FragmentAddBonsaiBinding
+    private lateinit var binding: FragmentAddBonsaiBinding
     private val viewModel: AddBonsaiViewModel by viewModels()
-
     private var imageUri: Uri? = null
 
-    companion object {
-        private val REQUEST_IMAGE_CAPTURE = 1
-        private val REQUEST_IMAGE_PICK = 2
+    private val cameraPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            dispatchTakePictureIntent()
+        } else {
+            Toast.makeText(requireContext(), "Permiso de cámara denegado", Toast.LENGTH_SHORT)
+                .show()
+        }
     }
 
+    private val galleryPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            dispatchPictureIntent()
+        } else {
+            Toast.makeText(
+                requireContext(),
+                "Permiso de almacenamiento denegado",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    private val takePictureLauncher =
+        registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+            if (success) {
+                imageUri?.let {
+                    binding.ivPhotoBonsai.setImageURI(it)
+                }
+            } else {
+                Toast.makeText(requireContext(), "Error al tomar la foto", Toast.LENGTH_SHORT)
+                    .show()
+            }
+    }
+
+    private val pickPictureLauncher =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            uri?.let {
+                imageUri = it
+                binding.ivPhotoBonsai.setImageURI(it)
+            }
+        }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentAddBonsaiBinding.inflate(inflater, container, false)
         setupUI(binding.root)
         setOnClickListeners()
@@ -56,26 +98,7 @@ class AddBonsaiFragment : Fragment() {
         observeViewModel()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK) {
-            when (requestCode) {
-                REQUEST_IMAGE_CAPTURE -> {
-                    val imageBitmap = data?.extras?.get("data") as Bitmap
-                    binding.ivPhotoBonsai.setImageBitmap(imageBitmap)
-                    imageUri = saveImageToFile(imageBitmap)
-                }
-
-                REQUEST_IMAGE_PICK -> {
-                    imageUri = data?.data
-                    binding.ivPhotoBonsai.setImageURI(imageUri)
-                }
-            }
-        }
-    }
-
     private fun observeViewModel() {
-
         lifecycleScope.launch {
             viewModel.bonsaiState.collect { state ->
                 when (state) {
@@ -85,17 +108,33 @@ class AddBonsaiFragment : Fragment() {
 
                     is AddBonsaiViewModel.BonsaiState.Loading -> {
                         Log.d("AddBonsaiFragment", "Loading")
+                        showProgressBar(true)
                     }
 
                     is AddBonsaiViewModel.BonsaiState.Success -> {
                         Log.d("AddBonsaiFragment", "Success")
+                        showProgressBar(false)
+                        Toast.makeText(
+                            requireContext(),
+                            "Bonsai agregado correctamente",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        findNavController().popBackStack()
                     }
 
                     is AddBonsaiViewModel.BonsaiState.Error -> {
-                        Log.d("AddBonsaiFragment", "Error")
+                        Log.d("AddBonsaiFragment", "Error: ${state.message}")
+                        showProgressBar(false)
+                        Toast.makeText(
+                            requireContext(),
+                            "Error: ${state.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
 
-                    is AddBonsaiViewModel.BonsaiState.ImageUploaded -> TODO()
+                    is AddBonsaiViewModel.BonsaiState.ImageUploaded -> {
+                        Log.d("AddBonsaiFragment", "Image uploaded")
+                    }
                 }
             }
         }
@@ -105,19 +144,8 @@ class AddBonsaiFragment : Fragment() {
                 event?.getContentIfNotHandled()?.let { result ->
                     if (result) {
                         Log.d("AddBonsaiFragment", "Bonsai added")
-                        Toast.makeText(
-                            requireContext(),
-                            "Bonsai agregado correctamente",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        findNavController().popBackStack()
                     } else {
                         Log.d("AddBonsaiFragment", "Bonsai not added")
-                        Toast.makeText(
-                            requireContext(),
-                            "Error al agregar el bonsai",
-                            Toast.LENGTH_SHORT
-                        ).show()
                     }
                 }
             }
@@ -141,7 +169,7 @@ class AddBonsaiFragment : Fragment() {
             findNavController().popBackStack()
         }
         binding.ivCamera.setOnClickListener {
-            showImagePickerDialog()
+            openImagePickerDialog()
         }
 
         binding.btnAdd.setOnClickListener {
@@ -163,59 +191,89 @@ class AddBonsaiFragment : Fragment() {
                     name = name,
                     dateAdquisition = date,
                     dateLastTransplant = lastTransplant,
-                    dateNextTransplant = nextTransplant
+                    dateNextTransplant = nextTransplant,
                 )
-                showProgressBar(true)
-                viewModel.addBonsai(bonsai)
-            }
-        }
-    }
 
-    private fun showImagePickerDialog() {
-        val options = arrayOf("Tomar una foto", "Seleccionar desde la galería", "Cancelar")
-        AlertDialog.Builder(requireContext())
-            .setItems(options) { _, which ->
-                when (which) {
-                    0 -> {
-                        takePhoto()
-                    }
-
-                    1 -> {
-                        pickPhoto()
-                    }
-
-                    2 -> {
-                        return@setItems
-                    }
+                imageUri?.let {
+                    showProgressBar(true)
+                    viewModel.addBonsaiWithImage(bonsai, it)
+                } ?: run {
+                    Toast.makeText(
+                        requireContext(),
+                        "Por favor, seleccione una imagen para el bonsai",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
-
             }
-    }
-
-    private fun takePhoto() {
-        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        if (takePictureIntent.resolveActivity(requireActivity().packageManager) != null) {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
         }
     }
 
-    private fun pickPhoto() {
-        val pickPhotoIntent =
-            Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        if (pickPhotoIntent.resolveActivity(requireActivity().packageManager) != null) {
-            startActivityForResult(pickPhotoIntent, REQUEST_IMAGE_PICK)
+    private fun openImagePickerDialog() {
+        val options = arrayOf("Tomar Foto", "Elegir de la Galería", "Cancelar")
+        AlertDialog.Builder(requireContext())
+            .setTitle("Seleccionar opción")
+            .setItems(options) { dialog, which ->
+                when (which) {
+                    0 -> checkCameraPermission()
+                    1 -> checkGalleryPermission()
+                    2 -> dialog.dismiss()
+                }
+            }
+            .show()
+    }
+
+    private fun checkCameraPermission() {
+        when {
+            ContextCompat.checkSelfPermission(
+                requireContext(),
+                android.Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                dispatchTakePictureIntent()
+            }
+
+            else -> {
+                cameraPermissionLauncher.launch(android.Manifest.permission.CAMERA)
+            }
         }
     }
 
-    private fun saveImageToFile(bitmap: Bitmap): Uri? {
-        val fileName = "bonsai_image.jpg"
-        val file = File(requireContext().filesDir, fileName)
-        val outputStream = file.outputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
-        outputStream.close()
-        return Uri.fromFile(file)
+    private fun checkGalleryPermission() {
+        when {
+            ContextCompat.checkSelfPermission(
+                requireContext(),
+                android.Manifest.permission.READ_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                dispatchPictureIntent()
+            }
 
+            else -> {
+                galleryPermissionLauncher.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
+            }
+        }
+    }
 
+    private fun dispatchTakePictureIntent() {
+        val photoFile: File? = createImageFile()
+        photoFile?.also {
+            imageUri = FileProvider.getUriForFile(
+                requireContext(),
+                "com.example.bonsaicatalog.fileprovider",
+                it
+            )
+            takePictureLauncher.launch(imageUri)
+        }
+    }
+
+    private fun dispatchPictureIntent() {
+        pickPictureLauncher.launch("image/*")
+    }
+
+    private fun createImageFile(): File {
+        val timeStamp: String =
+            SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val storageDir: File =
+            requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!
+        return File.createTempFile("JPEG_${timeStamp}_", ".jpg", storageDir)
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -243,5 +301,4 @@ class AddBonsaiFragment : Fragment() {
     private fun showProgressBar(show: Boolean) {
         binding.progressBar.visibility = if (show) View.VISIBLE else View.GONE
     }
-
 }

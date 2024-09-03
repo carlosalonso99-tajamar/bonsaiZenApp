@@ -31,6 +31,44 @@ class AddBonsaiViewModel @Inject constructor(
     private val _errorState = MutableStateFlow<String?>(null)
     val errorState: StateFlow<String?> = _errorState
 
+    fun addBonsaiWithImage(bonsai: Bonsai, imageUri: Uri) {
+        viewModelScope.launch {
+            _loadingMutableState.value = true
+
+            // Primero, subimos la imagen
+            val uploadResult = uploadBonsaiImageUseCase.invoke(imageUri)
+
+            if (uploadResult.isSuccess) {
+                // Si la imagen se subió correctamente, obtenemos la URL
+                val imageUrl = uploadResult.getOrNull() ?: ""
+
+                // Creamos un nuevo objeto Bonsai con la URL de la imagen
+                val bonsaiWithImage = bonsai.copy(images = listOf(imageUrl))
+
+                // Luego, agregamos el bonsái con la URL de la imagen
+                val addResult = addBonsaiUseCase.execute(bonsaiWithImage)
+
+                if (addResult.isSuccess) {
+                    _addBonsaiMutableState.value = Event(true)
+                    _bonsaiState.value = BonsaiState.Success("Bonsai agregado correctamente")
+                } else {
+                    _addBonsaiMutableState.value = Event(false)
+                    _bonsaiState.value = BonsaiState.Error(
+                        addResult.exceptionOrNull()?.message ?: "Error al agregar el bonsai"
+                    )
+                }
+            } else {
+                // Si hubo un error al subir la imagen, mostramos el error
+                _bonsaiState.value =
+                    BonsaiState.Error(
+                        uploadResult.exceptionOrNull()?.message ?: "Error al subir la imagen"
+                    )
+            }
+
+            _loadingMutableState.value = false
+        }
+    }
+
     fun addBonsai(bonsai: Bonsai) {
         viewModelScope.launch {
             val res = addBonsaiUseCase.execute(bonsai)
