@@ -117,6 +117,11 @@ class LoginFragment : Fragment() {
     }
 
     private fun setOnClickListeners() {
+
+        binding.ivBack.setOnClickListener {
+            findNavController().popBackStack()
+        }
+
         binding.btnLogin.setOnClickListener {
             val email = binding.etMail.text.toString()
             val password = binding.etPassword.text.toString()
