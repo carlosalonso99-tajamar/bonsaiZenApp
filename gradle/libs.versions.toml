@@ -1,6 +1,7 @@
 [versions]
 # Android
 agp = "8.4.2"
+exifinterface = "1.3.7"
 glide = "4.15.1"
 kotlin = "2.0.0"
 coreKtx = "1.13.1"
@@ -47,6 +48,7 @@ roomKtx = "2.6.1"
 # Androidx
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+androidx-exifinterface = { module = "androidx.exifinterface:exifinterface", version.ref = "exifinterface" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomKtx" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomKtx" }
 firebase-auth-ktx = { module = "com.google.firebase:firebase-auth-ktx" }

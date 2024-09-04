@@ -19,13 +19,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
+    <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/iv_photo_bonsai"
         android:layout_width="match_parent"
         android:layout_height="250dp"
         android:layout_marginTop="15dp"
-        android:background="@color/gray"
-        android:src="@drawable/ic_image"
+        android:background="@drawable/ic_image"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
