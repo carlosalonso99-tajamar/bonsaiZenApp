@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bonsaizen.bonsaizenapp.data.model.bonsais.Bonsai
+import com.bonsaizen.bonsaizenapp.domain.usecases.DeleteBonsaiUseCase
 import com.bonsaizen.bonsaizenapp.domain.usecases.GetBonsaiUseCase
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,7 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BonsaiListViewModel @Inject constructor(
-    private val getBonsaisUseCase: GetBonsaiUseCase
+    private val getBonsaisUseCase: GetBonsaiUseCase,
+    private val deleteBonsaiUseCase: DeleteBonsaiUseCase
 ) : ViewModel() {
 
     private val _bonsaiList = MutableStateFlow<List<Bonsai>>(emptyList())
@@ -45,4 +47,21 @@ class BonsaiListViewModel @Inject constructor(
             _loading.value = false
         }
     }
+
+    fun deleteBonsai(bonsai: String) {
+        viewModelScope.launch {
+            FirebaseAuth.getInstance().currentUser?.uid
+            _loading.value = true
+            Log.d("BonsaiListViewModel", "Deleting bonsai: $bonsai")
+            val result = deleteBonsaiUseCase.execute(Bonsai(name = bonsai))
+            if (result.isSuccess) {
+                _bonsaiList.value = _bonsaiList.value.filter { it.name != bonsai }
+                Log.d("BonsaiListViewModel", "Bonsai deleted successfully")
+            } else {
+                _error.value = result.exceptionOrNull()?.message
+                Log.e("BonsaiListViewModel", "Error deleting bonsai: ${_error.value}")
+            }
+            _loading.value = false
+        }
     }
+}

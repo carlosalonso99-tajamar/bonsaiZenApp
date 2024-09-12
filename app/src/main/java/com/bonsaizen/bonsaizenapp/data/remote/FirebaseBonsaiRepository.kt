@@ -37,17 +37,12 @@ class FirebaseBonsaiRepository @Inject constructor(
             Log.d(
                 "BonsaiRepository",
                 "Fetching bonsais for user: $userId"
-            ) // Log para el inicio de la operación
+            )
 
-            // Referencia a la colección de bonsáis del usuario
             val bonsaiCollectionRef = firestore.collection("Users")
                 .document(userId)
                 .collection("bonsais")
-
-            // Obtener los documentos de la subcolección de bonsáis
             val snapshot = bonsaiCollectionRef.get().await()
-
-            // Convertir los documentos en objetos Bonsai
             val bonsaiList = snapshot.toObjects(Bonsai::class.java)
 
             Log.d("BonsaiRepository", "Fetched bonsais count: ${bonsaiList.size}") // Log para éxito
@@ -67,6 +62,21 @@ class FirebaseBonsaiRepository @Inject constructor(
             val downloadUrl = uploadTask.storage.downloadUrl.await().toString()
             Result.success(downloadUrl)
         } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun deleteBonsai(bonsai: Bonsai): Result<Unit> {
+        return try {
+            val userId = auth.currentUser?.email ?: throw Exception("Usuario no autenticado")
+            val bonsaiCollection = firestore.collection("Users")
+                .document(userId)
+                .collection("bonsais")
+                .document(bonsai.name)
+            bonsaiCollection.delete().await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Log.e("BonsaiRepository", "Error al eliminar el bonsai", e) // Añadir logs
             Result.failure(e)
         }
     }

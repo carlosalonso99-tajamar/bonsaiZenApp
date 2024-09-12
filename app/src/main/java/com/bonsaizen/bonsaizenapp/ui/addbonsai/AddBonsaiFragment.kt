@@ -36,7 +36,8 @@ class AddBonsaiFragment : Fragment() {
 
     private lateinit var binding: FragmentAddBonsaiBinding
     private val viewModel: AddBonsaiViewModel by viewModels()
-    private var imageUri: Uri? = null
+    private val imageUris =
+        mutableListOf<Uri>()
 
     private val cameraPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -53,7 +54,7 @@ class AddBonsaiFragment : Fragment() {
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         if (isGranted) {
-            dispatchPictureIntent()
+            pickPicturesLauncher.launch("image/*")
         } else {
             Toast.makeText(
                 requireContext(),
@@ -67,7 +68,8 @@ class AddBonsaiFragment : Fragment() {
         registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
             if (success) {
                 imageUri?.let {
-                    binding.ivPhotoBonsai.setImageURI(it)
+                    imageUris.add(it)
+                    updateImagePreview()
                 }
             } else {
                 Toast.makeText(requireContext(), "Error al tomar la foto", Toast.LENGTH_SHORT)
@@ -75,13 +77,16 @@ class AddBonsaiFragment : Fragment() {
             }
     }
 
-    private val pickPictureLauncher =
-        registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-            uri?.let {
-                imageUri = it
-                binding.ivPhotoBonsai.setImageURI(it)
+    private val pickPicturesLauncher =
+        registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris ->
+            uris?.let {
+                imageUris.clear()
+                imageUris.addAll(it)
+                updateImagePreview()
             }
         }
+
+    private var imageUri: Uri? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -105,33 +110,15 @@ class AddBonsaiFragment : Fragment() {
                     is AddBonsaiViewModel.BonsaiState.Idle -> {
                         Log.d("AddBonsaiFragment", "Idle")
                     }
-
                     is AddBonsaiViewModel.BonsaiState.Loading -> {
                         Log.d("AddBonsaiFragment", "Loading")
-                        showProgressBar(true)
                     }
-
                     is AddBonsaiViewModel.BonsaiState.Success -> {
                         Log.d("AddBonsaiFragment", "Success")
-                        showProgressBar(false)
-                        Toast.makeText(
-                            requireContext(),
-                            "Bonsai agregado correctamente",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        findNavController().popBackStack()
                     }
-
                     is AddBonsaiViewModel.BonsaiState.Error -> {
-                        Log.d("AddBonsaiFragment", "Error: ${state.message}")
-                        showProgressBar(false)
-                        Toast.makeText(
-                            requireContext(),
-                            "Error: ${state.message}",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        Log.d("AddBonsaiFragment", "Error")
                     }
-
                     is AddBonsaiViewModel.BonsaiState.ImageUploaded -> {
                         Log.d("AddBonsaiFragment", "Image uploaded")
                     }
@@ -144,8 +131,19 @@ class AddBonsaiFragment : Fragment() {
                 event?.getContentIfNotHandled()?.let { result ->
                     if (result) {
                         Log.d("AddBonsaiFragment", "Bonsai added")
+                        Toast.makeText(
+                            requireContext(),
+                            "Bonsai agregado correctamente",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        findNavController().popBackStack()
                     } else {
                         Log.d("AddBonsaiFragment", "Bonsai not added")
+                        Toast.makeText(
+                            requireContext(),
+                            "Error al agregar el bonsai",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
             }
@@ -168,6 +166,7 @@ class AddBonsaiFragment : Fragment() {
         binding.ivBack.setOnClickListener {
             findNavController().popBackStack()
         }
+
         binding.ivCamera.setOnClickListener {
             openImagePickerDialog()
         }
@@ -192,18 +191,10 @@ class AddBonsaiFragment : Fragment() {
                     dateAdquisition = date,
                     dateLastTransplant = lastTransplant,
                     dateNextTransplant = nextTransplant,
+                    images = imageUris.map { it.toString() } // Guarda las URLs de las imágenes
                 )
-
-                imageUri?.let {
-                    showProgressBar(true)
-                    viewModel.addBonsaiWithImage(bonsai, it)
-                } ?: run {
-                    Toast.makeText(
-                        requireContext(),
-                        "Por favor, seleccione una imagen para el bonsai",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+                showProgressBar(true)
+                viewModel.addBonsai(bonsai)
             }
         }
     }
@@ -230,7 +221,6 @@ class AddBonsaiFragment : Fragment() {
             ) == PackageManager.PERMISSION_GRANTED -> {
                 dispatchTakePictureIntent()
             }
-
             else -> {
                 cameraPermissionLauncher.launch(android.Manifest.permission.CAMERA)
             }
@@ -243,9 +233,8 @@ class AddBonsaiFragment : Fragment() {
                 requireContext(),
                 android.Manifest.permission.READ_EXTERNAL_STORAGE
             ) == PackageManager.PERMISSION_GRANTED -> {
-                dispatchPictureIntent()
+                pickPicturesLauncher.launch("image/*") // Permite seleccionar múltiples imágenes
             }
-
             else -> {
                 galleryPermissionLauncher.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
             }
@@ -265,7 +254,7 @@ class AddBonsaiFragment : Fragment() {
     }
 
     private fun dispatchPictureIntent() {
-        pickPictureLauncher.launch("image/*")
+        pickPicturesLauncher.launch("image/*")
     }
 
     private fun createImageFile(): File {
@@ -274,6 +263,16 @@ class AddBonsaiFragment : Fragment() {
         val storageDir: File =
             requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!
         return File.createTempFile("JPEG_${timeStamp}_", ".jpg", storageDir)
+    }
+
+    private fun updateImagePreview() {
+        val imageSliderAdapter = ImageSliderAdapter(imageUris, binding.ivPhotoBonsai)
+        binding.ivPhotoBonsai.adapter = imageSliderAdapter
+        binding.ivPhotoBonsai.setCurrentItem(0, false)
+    }
+
+    private fun showProgressBar(show: Boolean) {
+        binding.progressBar.visibility = if (show) View.VISIBLE else View.GONE
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -296,9 +295,5 @@ class AddBonsaiFragment : Fragment() {
         val imm =
             requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view?.windowToken, 0)
-    }
-
-    private fun showProgressBar(show: Boolean) {
-        binding.progressBar.visibility = if (show) View.VISIBLE else View.GONE
     }
 }

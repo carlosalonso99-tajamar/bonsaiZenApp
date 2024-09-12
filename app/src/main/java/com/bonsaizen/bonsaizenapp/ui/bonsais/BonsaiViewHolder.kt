@@ -23,7 +23,7 @@ class BonsaiViewHolder(
                 Picasso.get()
                     .load(bonsai.images.first())
                     .resize(200, 200)
-                    .centerCrop()
+                    .rotate(90f)
                     .placeholder(R.drawable.ic_image)
                     .error(R.drawable.ic_image)
                     .into(binding.ivBonsai)

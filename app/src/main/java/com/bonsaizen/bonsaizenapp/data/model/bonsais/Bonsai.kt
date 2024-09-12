@@ -6,6 +6,6 @@ data class Bonsai(
     val dateAdquisition: String = "",
     val dateLastTransplant: String = "",
     val dateNextTransplant: String = "",
-    val images: List<String> = emptyList(),
+    val images: List<String> = listOf()
 
 )
