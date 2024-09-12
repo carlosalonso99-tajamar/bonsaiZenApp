@@ -32,4 +32,15 @@ class BonsaiAdapter(
         bonsaiList = newBonsaiList
         notifyDataSetChanged()
     }
+
+    fun getBonsaiId(position: Int): Bonsai {
+        return bonsaiList[position]
+    }
+
+    fun removeItem(position: Int) {
+        Log.d("BonsaiAdapter", "Removing item at position: $position")
+        bonsaiList = bonsaiList - bonsaiList[position]
+        notifyItemRemoved(position)
+    }
+
 }

@@ -34,11 +34,11 @@ class ImageSliderAdapter(
                 .placeholder(R.drawable.ic_image)
                 .into(holder.imageView)
 
-            // Si hay imágenes, quita el fondo del ViewPager2
+
             viewPager.background = null
         } else {
-            // Si no hay imágenes, establece un fondo predeterminado si es necesario
-            viewPager.setBackgroundColor(Color.WHITE) // Puedes ajustar el color según tus necesidades
+
+            viewPager.setBackgroundColor(Color.WHITE)
         }
     }
 

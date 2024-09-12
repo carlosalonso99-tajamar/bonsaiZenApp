@@ -37,7 +37,7 @@ class AddBonsaiFragment : Fragment() {
     private lateinit var binding: FragmentAddBonsaiBinding
     private val viewModel: AddBonsaiViewModel by viewModels()
     private val imageUris =
-        mutableListOf<Uri>() // Lista para almacenar URIs de las imágenes seleccionadas
+        mutableListOf<Uri>()
 
     private val cameraPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -54,7 +54,7 @@ class AddBonsaiFragment : Fragment() {
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         if (isGranted) {
-            pickPicturesLauncher.launch("image/*") // Permite seleccionar múltiples imágenes
+            pickPicturesLauncher.launch("image/*")
         } else {
             Toast.makeText(
                 requireContext(),
@@ -68,8 +68,8 @@ class AddBonsaiFragment : Fragment() {
         registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
             if (success) {
                 imageUri?.let {
-                    imageUris.add(it) // Añade la imagen tomada a la lista
-                    updateImagePreview() // Actualiza el visor de imágenes
+                    imageUris.add(it)
+                    updateImagePreview()
                 }
             } else {
                 Toast.makeText(requireContext(), "Error al tomar la foto", Toast.LENGTH_SHORT)
@@ -80,13 +80,13 @@ class AddBonsaiFragment : Fragment() {
     private val pickPicturesLauncher =
         registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris ->
             uris?.let {
-                imageUris.clear() // Limpia la lista antes de añadir nuevas imágenes
+                imageUris.clear()
                 imageUris.addAll(it)
-                updateImagePreview() // Actualiza el visor de imágenes
+                updateImagePreview()
             }
         }
 
-    private var imageUri: Uri? = null // Definición de imageUri
+    private var imageUri: Uri? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -266,10 +266,8 @@ class AddBonsaiFragment : Fragment() {
     }
 
     private fun updateImagePreview() {
-        // Configura el adaptador y el ViewPager2 para mostrar las imágenes seleccionadas
         val imageSliderAdapter = ImageSliderAdapter(imageUris, binding.ivPhotoBonsai)
         binding.ivPhotoBonsai.adapter = imageSliderAdapter
-        // Opcional: Si quieres ir al inicio del slider
         binding.ivPhotoBonsai.setCurrentItem(0, false)
     }
 
