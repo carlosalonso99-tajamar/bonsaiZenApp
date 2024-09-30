@@ -9,5 +9,8 @@ interface BonsaiRepository {
     suspend fun getBonsaiList(userId: String): Result<List<Bonsai>>
     suspend fun uploadImage(imageUri: Uri): Result<String>
     suspend fun deleteBonsai(bonsai: Bonsai): Result<Unit>
+    suspend fun updateBonsai(bonsai: Bonsai): Result<Unit>
+    suspend fun updateBonsaiImage(bonsai: Bonsai, imageUri: Uri): Result<Unit>
+
 
 }

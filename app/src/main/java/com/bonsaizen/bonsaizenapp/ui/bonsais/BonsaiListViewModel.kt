@@ -53,9 +53,9 @@ class BonsaiListViewModel @Inject constructor(
             FirebaseAuth.getInstance().currentUser?.uid
             _loading.value = true
             Log.d("BonsaiListViewModel", "Deleting bonsai: $bonsai")
-            val result = deleteBonsaiUseCase.execute(Bonsai(name = bonsai))
+            val result = deleteBonsaiUseCase.execute(Bonsai(id = bonsai))
             if (result.isSuccess) {
-                _bonsaiList.value = _bonsaiList.value.filter { it.name != bonsai }
+                _bonsaiList.value = _bonsaiList.value.filter { it.id != bonsai }
                 Log.d("BonsaiListViewModel", "Bonsai deleted successfully")
             } else {
                 _error.value = result.exceptionOrNull()?.message
