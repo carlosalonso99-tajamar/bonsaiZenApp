@@ -75,6 +75,9 @@
             app:exitAnim="@anim/exit_to_right"
             app:popEnterAnim="@anim/enter_from_right"
             app:popExitAnim="@anim/exit_to_left" />
+        <action
+            android:id="@+id/action_bonsaiListFragment_to_editBonsaiFragment"
+            app:destination="@id/editBonsaiFragment" />
     </fragment>
     <fragment
         android:id="@+id/addBonsaiFragment"
@@ -84,5 +87,18 @@
         <action
             android:id="@+id/action_addBonsaiFragment_to_bonsaiListFragment"
             app:destination="@id/bonsaiListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/editBonsaiFragment"
+        android:name="com.bonsaizen.bonsaizenapp.ui.editbonsai.EditBonsaiFragment"
+        android:label="fragment_edit_bonsai"
+        tools:layout="@layout/fragment_edit_bonsai">
+        <action
+            android:id="@+id/action_editBonsaiFragment_to_bonsaiListFragment"
+            app:destination="@id/bonsaiListFragment" />
+
+        <argument
+            android:name="bonsai"
+            app:argType="com.bonsaizen.bonsaizenapp.data.model.bonsais.Bonsai" />
     </fragment>
 </navigation>

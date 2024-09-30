@@ -18,15 +18,19 @@ class FirebaseBonsaiRepository @Inject constructor(
 
     override suspend fun addBonsai(bonsai: Bonsai): Result<Unit> {
         return try {
-            val userId = auth.currentUser?.email ?: throw Exception("Usuario no autencificado")
+            val userId = auth.currentUser?.email ?: throw Exception("Usuario no autenticado")
+            val bonsaiId = bonsai.id.ifEmpty { firestore.collection("Users").document().id }
+
             val bonsaiCollection = firestore.collection("Users")
                 .document(userId)
                 .collection("bonsais")
-                .document(bonsai.name)
-            val bonsaiWithId = bonsai.copy(id = bonsai.id)
+                .document(bonsaiId)
+            val bonsaiWithId = bonsai.copy(id = bonsaiId)
             bonsaiCollection.set(bonsaiWithId).await()
+
             Result.success(Unit)
         } catch (e: Exception) {
+            Log.e("BonsaiRepository", "Error al agregar el bonsái", e)
             Result.failure(e)
         }
     }
@@ -69,14 +73,64 @@ class FirebaseBonsaiRepository @Inject constructor(
     override suspend fun deleteBonsai(bonsai: Bonsai): Result<Unit> {
         return try {
             val userId = auth.currentUser?.email ?: throw Exception("Usuario no autenticado")
+
+            Log.d("BonsaiRepository", "Eliminando bonsái con ID: ${bonsai.id}")
+
             val bonsaiCollection = firestore.collection("Users")
                 .document(userId)
                 .collection("bonsais")
-                .document(bonsai.name)
+                .document(bonsai.id)
             bonsaiCollection.delete().await()
             Result.success(Unit)
         } catch (e: Exception) {
-            Log.e("BonsaiRepository", "Error al eliminar el bonsai", e) // Añadir logs
+            Log.e("BonsaiRepository", "Error al eliminar el bonsái", e)
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun updateBonsai(bonsai: Bonsai): Result<Unit> {
+        return try {
+            val userId = auth.currentUser?.email ?: throw Exception("Usuario no autenticado")
+            val bonsaiCollection = firestore.collection("Users")
+                .document(userId)
+                .collection("bonsais")
+                .document(bonsai.id)
+            bonsaiCollection.set(bonsai).await()
+            Log.d("BonsaiRepository", "Bonsái actualizado correctamente: ${bonsai.id}")
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Log.e("BonsaiRepository", "Error al actualizar el otrosai", e) // Añadir logs
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun updateBonsaiImage(bonsai: Bonsai, imageUri: Uri): Result<Unit> {
+        return try {
+            val userId = auth.currentUser?.email ?: throw Exception("Usuario no autenticado")
+
+            // Subir la nueva imagen a Firebase Storage
+            val storageRef = storage.reference.child("bonsais_images/${imageUri.lastPathSegment}")
+            val uploadTask = storageRef.putFile(imageUri).await()
+            val downloadUrl = uploadTask.storage.downloadUrl.await().toString()
+
+            // Obtener la referencia del bonsái en Firestore
+            val bonsaiCollection = firestore.collection("Users")
+                .document(userId)
+                .collection("bonsais")
+                .document(bonsai.id)
+
+            // Recuperar la lista actual de imágenes del bonsái
+            val currentBonsai = bonsaiCollection.get().await().toObject(Bonsai::class.java)
+            val updatedImageList = currentBonsai?.images?.toMutableList() ?: mutableListOf()
+
+            // Añadir la nueva URL de imagen a la lista
+            updatedImageList.add(downloadUrl)
+
+            // Actualizar el campo 'images' del bonsái en Firestore con la lista actualizada
+            bonsaiCollection.update("images", updatedImageList).await()
+
+            Result.success(Unit)
+        } catch (e: Exception) {
             Result.failure(e)
         }
     }

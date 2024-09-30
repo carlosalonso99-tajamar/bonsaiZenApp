@@ -32,9 +32,6 @@ class BonsaiListFragment : Fragment() {
     ): View {
         binding = FragmentBonsaiListBinding.inflate(inflater, container, false)
         setupRecyclerView()
-
-
-
         return binding.root
     }
 
@@ -60,11 +57,17 @@ class BonsaiListFragment : Fragment() {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
                 val bonsaiId = adapter.getBonsaiId(position)
-
-                // Eliminar el bonsái de Firestore usando su ID
-                viewModel.deleteBonsai(bonsaiId.name)
-                adapter.removeItem(position)
-
+                AlertDialog.Builder(requireContext()).apply {
+                    setTitle("Eliminar Bonsai")
+                    setMessage("¿Estás seguro de que deseas eliminar este Bonsai?")
+                    setPositiveButton("Si") { _, _ ->
+                        viewModel.deleteBonsai(bonsaiId.id)
+                        adapter.removeItem(position)
+                    }
+                    setNegativeButton("No") { _, _ -> }
+                    create()
+                    show()
+                }
             }
         }
 
@@ -106,7 +109,7 @@ class BonsaiListFragment : Fragment() {
 
     private fun updateVisibility(isListEmpty: Boolean) {
         if (isListEmpty) {
-            binding.ivBonsai.visibility = View.VISIBLE // Asegúrate de que los IDs sean correctos
+            binding.ivBonsai.visibility = View.VISIBLE
             binding.tvTextListBonsai.visibility = View.VISIBLE
         } else {
             binding.ivBonsai.visibility = View.GONE
@@ -140,7 +143,9 @@ class BonsaiListFragment : Fragment() {
 
     private fun setupRecyclerView() {
         adapter = BonsaiAdapter(emptyList()) { bonsai ->
-            // Acciones cuando se hace clic en un bonsái
+            val action =
+                BonsaiListFragmentDirections.actionBonsaiListFragmentToEditBonsaiFragment(bonsai)
+            findNavController().navigate(action)
         }
         binding.rvBonsais.layoutManager = LinearLayoutManager(requireContext())
         binding.rvBonsais.adapter = adapter

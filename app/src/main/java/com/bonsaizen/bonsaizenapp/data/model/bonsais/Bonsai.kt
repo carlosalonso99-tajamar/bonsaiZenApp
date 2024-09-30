@@ -1,5 +1,10 @@
 package com.bonsaizen.bonsaizenapp.data.model.bonsais
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+
+@Parcelize
 data class Bonsai(
     val id: String = "",
     val name: String = "",
@@ -8,4 +13,4 @@ data class Bonsai(
     val dateNextTransplant: String = "",
     val images: List<String> = listOf()
 
-)
+) : Parcelable

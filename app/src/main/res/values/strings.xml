@@ -43,4 +43,9 @@
     <string name="et_next_transplant">Próximo transplante</string>
     <string name="btn_add">Añadir</string>
 
+    //Edit Bonsai Fragment
+    <string name="tv_edit_bonsai_title">Editar Foto</string>
+    <string name="btn_edit">Editar</string>
+    <string name="btn_delete">Eliminar</string>
+
 </resources>

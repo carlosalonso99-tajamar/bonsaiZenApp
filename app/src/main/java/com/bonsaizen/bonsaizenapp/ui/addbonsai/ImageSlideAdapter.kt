@@ -13,7 +13,7 @@ import com.squareup.picasso.Picasso
 
 class ImageSliderAdapter(
     private val imageUris: List<Uri>,
-    private val viewPager: ViewPager2
+    private val viewPager: ViewPager2,
 ) : RecyclerView.Adapter<ImageSliderAdapter.ImageViewHolder>() {
 
     inner class ImageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
