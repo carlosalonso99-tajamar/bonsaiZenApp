@@ -23,6 +23,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bonsaizen.bonsaizenapp.data.model.bonsais.Bonsai
 import com.bonsaizen.bonsaizenapp.databinding.FragmentAddBonsaiBinding
+import com.bonsaizen.bonsaizenapp.utils.DatePickerFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.io.File
@@ -171,6 +172,16 @@ class AddBonsaiFragment : Fragment() {
             openImagePickerDialog()
         }
 
+        binding.etDateBonsai.setOnClickListener {
+            showDatePicker()
+        }
+        binding.etTransplantBonsai.setOnClickListener {
+            showTransplantDatePicker()
+        }
+        binding.etNextTransplantBonsai.setOnClickListener {
+            showNextTransplantDatePicker()
+        }
+
         binding.btnAdd.setOnClickListener {
             val name = binding.etNameBonsai.text.toString()
             val date = binding.etDateBonsai.text.toString()
@@ -197,6 +208,43 @@ class AddBonsaiFragment : Fragment() {
                 viewModel.addBonsai(bonsai)
             }
         }
+    }
+
+    private fun showDatePicker() {
+        val datePicker = DatePickerFragment { day, month, year -> onDateSelected(day, month, year) }
+        datePicker.show(parentFragmentManager, "datePicker")
+    }
+
+    private fun showTransplantDatePicker() {
+        val datePicker =
+            DatePickerFragment { day, month, year -> onTransplantBonsaiSelected(day, month, year) }
+        datePicker.show(parentFragmentManager, "datePicker")
+    }
+
+    private fun showNextTransplantDatePicker() {
+        val datePicker = DatePickerFragment { day, month, year ->
+            onNextTransplantBonsaiSelected(
+                day,
+                month,
+                year
+            )
+        }
+        datePicker.show(parentFragmentManager, "datePicker")
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun onDateSelected(day: Int, month: Int, year: Int) {
+        binding.etDateBonsai.setText("$day/$month/$year")
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun onTransplantBonsaiSelected(day: Int, month: Int, year: Int) {
+        binding.etTransplantBonsai.setText("$day/$month/$year")
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun onNextTransplantBonsaiSelected(day: Int, month: Int, year: Int) {
+        binding.etNextTransplantBonsai.setText("$day/$month/$year")
     }
 
     private fun openImagePickerDialog() {
@@ -253,9 +301,6 @@ class AddBonsaiFragment : Fragment() {
         }
     }
 
-    private fun dispatchPictureIntent() {
-        pickPicturesLauncher.launch("image/*")
-    }
 
     private fun createImageFile(): File {
         val timeStamp: String =
