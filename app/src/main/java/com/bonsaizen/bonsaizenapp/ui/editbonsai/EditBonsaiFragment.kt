@@ -24,6 +24,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bonsaizen.bonsaizenapp.databinding.FragmentEditBonsaiBinding
 import com.bonsaizen.bonsaizenapp.ui.addbonsai.ImageSliderAdapter
+import com.bonsaizen.bonsaizenapp.utils.DatePickerFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.io.File
@@ -201,9 +202,21 @@ class EditBonsaiFragment : Fragment() {
         binding.ivBack.setOnClickListener {
             findNavController().popBackStack()
         }
+
         binding.ivCamera.setOnClickListener {
             openImagePickerDialog()
         }
+
+        binding.etDateBonsai.setOnClickListener {
+            showDatePicker()
+        }
+        binding.etTransplantBonsai.setOnClickListener {
+            showTransplantDatePicker()
+        }
+        binding.etNextTransplantBonsai.setOnClickListener {
+            showNextTransplantDatePicker()
+        }
+
         val currentBonsai = args.bonsai
         binding.etNameBonsai.setText(currentBonsai.name)
         binding.etDateBonsai.setText(currentBonsai.dateAdquisition)
@@ -227,6 +240,43 @@ class EditBonsaiFragment : Fragment() {
             viewModel.updateBonsai(updateBonsai)
 
         }
+    }
+
+    private fun showDatePicker() {
+        val datePicker = DatePickerFragment { day, month, year -> onDateSelected(day, month, year) }
+        datePicker.show(parentFragmentManager, "datePicker")
+    }
+
+    private fun showTransplantDatePicker() {
+        val datePicker =
+            DatePickerFragment { day, month, year -> onTransplantBonsaiSelected(day, month, year) }
+        datePicker.show(parentFragmentManager, "datePicker")
+    }
+
+    private fun showNextTransplantDatePicker() {
+        val datePicker = DatePickerFragment { day, month, year ->
+            onNextTransplantBonsaiSelected(
+                day,
+                month,
+                year
+            )
+        }
+        datePicker.show(parentFragmentManager, "datePicker")
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun onDateSelected(day: Int, month: Int, year: Int) {
+        binding.etDateBonsai.setText("$day/$month/$year")
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun onTransplantBonsaiSelected(day: Int, month: Int, year: Int) {
+        binding.etTransplantBonsai.setText("$day/$month/$year")
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun onNextTransplantBonsaiSelected(day: Int, month: Int, year: Int) {
+        binding.etNextTransplantBonsai.setText("$day/$month/$year")
     }
 
 
