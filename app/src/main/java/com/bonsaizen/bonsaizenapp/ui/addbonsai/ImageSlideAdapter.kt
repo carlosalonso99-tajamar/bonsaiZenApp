@@ -33,11 +33,8 @@ class ImageSliderAdapter(
                 .rotate(90f)
                 .placeholder(R.drawable.ic_image)
                 .into(holder.imageView)
-
-
             viewPager.background = null
         } else {
-
             viewPager.setBackgroundColor(Color.WHITE)
         }
     }

@@ -100,7 +100,6 @@ class BonsaiListFragment : Fragment() {
                 }
             }
         }
-
     }
 
     private fun setupViewModel() {
@@ -156,10 +155,3 @@ class BonsaiListFragment : Fragment() {
         binding.progressBar.visibility = if (show) View.VISIBLE else View.GONE
     }
 }
-
-
-
-
-
-
-
