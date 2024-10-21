@@ -18,6 +18,8 @@ class BonsaiViewHolder(
         binding.apply {
             tvBonsaiName.text = bonsai.name
             tvDate.text = bonsai.dateAdquisition
+            tvDateLastTransplant.text = bonsai.dateLastTransplant
+            tvDateNextTransplant.text = bonsai.dateNextTransplant
 
             if (bonsai.images.isNotEmpty()) {
                 Picasso.get()

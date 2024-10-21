@@ -58,7 +58,6 @@ class AddBonsaiViewModel @Inject constructor(
                         uploadResult.exceptionOrNull()?.message ?: "Error al subir la imagen"
                     )
             }
-
             _loadingMutableState.value = false
         }
     }
