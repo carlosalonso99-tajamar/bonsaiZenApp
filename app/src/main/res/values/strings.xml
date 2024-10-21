@@ -1,3 +1,51 @@
 <resources>
-    <string name="app_name">My Application</string>
+    <string name="app_name">BonsaiZen</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="user_register">Registro exitoso</string>
+    <string name="user_success">Usuario creado</string>
+    <string name="error">Error</string>
+    <string name="credentials">El usuario o la contraseña son incorrectos</string>
+    <string name="user_register_error">Todos los campos son obligatorios</string>
+    <string name="error_password_mismatch">Las contraseñas no coinciden</string>
+    <string name="confirm_exit_title">¿Estás seguro?</string>
+    <string name="confirm_exit_message">¿Realmente quieres salir?</string>
+    <string name="confirm">Confirmar</string>
+    <string name="cancel">Cancelar</string>
+
+    //Init Fragment
+    <string name="tv_init_text">Bonsai Zen</string>
+    <string name="btn_init_text">Comienza a usar Bonsai Zen!</string>
+    <string name="btn_init_text2">Ya eres miembro,entra</string>
+
+    //Register Fragment
+    <string name="tv_register_title">Registrate para comenzar a explorar</string>
+    <string name="et_mail_hint">Correo electrónico</string>
+    <string name="et_pass_hint">Contraseña</string>
+    <string name="et_repeatpass_hint">Repetir Contraseña</string>
+    <string name="btn_register">Registrarse</string>
+    <string name="btn_google">Registrate con Google</string>
+
+    //Login Fragment
+    <string name="tv_login_title">Bienvenido!</string>
+    <string name="btn_login">Iniciar Sesión</string>
+    <string name="btn_login_google">Inicia sesión con Google</string>
+
+    //Bonsai List Fragment
+    <string name="tv_bonsai_list_title">Mis Bonsais</string>
+    <string name="tv_text_list_bonsai">Añade tus Bonsais</string>
+
+    //Add Bonsai Fragment
+    <string name="tv_add_photo_title">Añadir Foto</string>
+    <string name="et_name">Nombre</string>
+    <string name="et_date">Fecha adquisición</string>
+    <string name="et_transplant">Último transplante</string>
+    <string name="et_next_transplant">Próximo transplante</string>
+    <string name="btn_add">Añadir</string>
+
+    //Edit Bonsai Fragment
+    <string name="tv_edit_bonsai_title">Editar Foto</string>
+    <string name="btn_edit">Editar</string>
+    <string name="btn_delete">Eliminar</string>
+
 </resources>

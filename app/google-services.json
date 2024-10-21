@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "878349330527",
+    "project_id": "bonsaizen-c6b71",
+    "storage_bucket": "bonsaizen-c6b71.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:878349330527:android:02e768ff8cfa42a38293ea",
+        "android_client_info": {
+          "package_name": "com.bonsaizen.bonsaizenapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC3iZa_9oPN0l3gRFgLk_WPUVOZo2J66nQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
