@@ -8,6 +8,7 @@ Bonsai Zen es una aplicación para gestionar tus bonsáis de manera sencilla y e
 - **Detalle y edición**: Abre un fragmento al seleccionar un bonsái para editar su información.
 - **Base de datos local**: Los datos de tus bonsáis se almacenan localmente.
 - **Interfaz intuitiva**: Navegación fluida y diseño minimalista.
+- **Sincronización en la nube**: Integración con Firebase para sincronizar los datos en múltiples dispositivos.
 
 ## Tecnologías utilizadas
 
@@ -16,6 +17,7 @@ Bonsai Zen es una aplicación para gestionar tus bonsáis de manera sencilla y e
 - **UI Components**: RecyclerView, Fragments
 - **Base de datos**: Room
 - **Inyección de dependencias**: Hilt
+- **Backend**: Firebase (Firestore y Authentication)
 
 ## Instalación y configuración
 
@@ -35,6 +37,8 @@ Bonsai Zen es una aplicación para gestionar tus bonsáis de manera sencilla y e
    kapt "androidx.room:room-compiler:2.5.2"
    implementation "com.google.dagger:hilt-android:2.48"
    kapt "com.google.dagger:hilt-compiler:2.48"
+   implementation "com.google.firebase:firebase-firestore-ktx:24.7.1"
+   implementation "com.google.firebase:firebase-auth-ktx:22.1.0"
    ```
 
 4. Configura tu entorno para usar Hilt agregando el plugin en tu archivo `build.gradle`:
@@ -45,7 +49,12 @@ Bonsai Zen es una aplicación para gestionar tus bonsáis de manera sencilla y e
    }
    ```
 
-5. Sincroniza el proyecto y ejecuta la aplicación en tu emulador o dispositivo físico.
+5. Configura Firebase:
+   - Crea un proyecto en [Firebase Console](https://console.firebase.google.com/).
+   - Agrega el archivo `google-services.json` a la carpeta `app/` de tu proyecto.
+   - Habilita Firestore y Authentication en tu proyecto de Firebase.
+
+6. Sincroniza el proyecto y ejecuta la aplicación en tu emulador o dispositivo físico.
 
 ## Estructura del proyecto
 
@@ -56,6 +65,7 @@ bonsaiZenApp/
 │   ├── di/                  # Módulos de Hilt para inyección de dependencias
 │   ├── ui/                  # Fragmentos y componentes de la interfaz de usuario
 │   ├── viewmodel/           # ViewModels
+│   ├── firebase/            # Clases relacionadas con Firebase
 │   └── utils/               # Utilidades y extensiones
 └── build.gradle             # Configuración del proyecto
 ```
